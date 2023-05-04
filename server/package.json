@@ -1,0 +1,38 @@
+{
+  "name": "e-commerce-api",
+  "version": "2.0.0",
+  "description": "Full Stack Dev project for Codecademy",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "e-commerce",
+    "REST API",
+    "Express",
+    "Node.js",
+    "PostgreSQL"
+  ],
+  "author": "Manuel Delgado Obrero",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "connect-pg-simple": "^8.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-router": "^0.0.1",
+    "express-session": "^1.17.3",
+    "express-validator": "^6.15.0",
+    "http-errors": "^2.0.0",
+    "js-yaml": "^4.1.0",
+    "moment": "^2.29.4",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "pg": "^8.10.0",
+    "session": "^0.1.0",
+    "swagger-ui-express": "^4.6.2",
+    "validator": "^13.9.0"
+  }
+}

@@ -1,0 +1,50 @@
+register user
+{
+    "user":{
+        "username": "Jdoe1989",
+        "email": "jdoe@gmail.com"
+    },
+    "password":"password1",
+    "pinfo":{
+        "first_name":"Jhon",
+        "last_name": "Doe",
+        "date_of_birth": "1989-30-05",
+        "phone_number": "12345678900"
+    }
+}
+
+login user
+
+{
+    "email": "bone@gmail.com",
+    "lpassword": "password1"
+}
+
+update password
+
+{
+    "oldpassword": "password1",
+    "newpassword": "password2"
+}
+
+insert cartproduct:
+
+{
+    "productid": 3,
+    "qty": 2,
+    "total_pp": 13.50
+}
+
+delete 
+
+{
+    "productid": 3
+}
+
+{
+    "total_price": 40.5,
+    "del_postcode": "GU11 4BD",
+    "del_street": "12 Alexander House, 12 Fraser Road",
+    "del_city": "Aldershot",
+    "del_county": "Hampshire"
+}

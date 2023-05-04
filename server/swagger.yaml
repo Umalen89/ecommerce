@@ -1,0 +1,1726 @@
+openapi: 3.0.1
+info:
+  title: Ecommerce API
+  version: 1.0.0
+  description: 'Basic API targetting commerce sector '
+paths:
+  /auth/register:
+    summary: register user
+    description: Path intended for registering new users.
+    post:
+      summary: create new user
+      description: Creates a new user with given parameters with validating constrains
+      operationId: register-user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  description: Username and Email values
+                  properties:
+                    username:
+                      type: string
+                      minLength: 4
+                      maxLength: 40
+                      description: Must contain alphanumeric values
+                      example: Jdoe1989
+                    email:
+                      type: string
+                      format: email
+                      example: jdoe@gmail.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 6
+                  maxLength: 30
+                  description: Must contain mix of Alphanumeric values
+                  example: password1
+                pinfo:
+                  type: object
+                  description: Personal Info values
+                  properties:
+                    first_name:
+                      type: string
+                      minLength: 2
+                      maxLength: 25
+                      description: Must contain only Alphabet values and spaces
+                      example: Jhon
+                    last_name:
+                      type: string
+                      minLength: 2
+                      maxLength: 50
+                      description: Must contain only Alphabet values and spaces
+                      example: Doe
+                    date_of_birth:
+                      type: string
+                      format: date
+                      example: '1989-30-05'
+                    phone_number:
+                      type: string
+                      description: Must contain valid Phone Number
+                      example: '12345678900'
+      responses:
+        '200':
+          description: A new user registered to be returned
+          content:
+            application/json:
+              examples:
+                success object returned:
+                  value: |-
+                    {
+                        "user": {
+                            "id": 25,
+                            "username": "Jdoe1989",
+                            "email": "jdoe@gmail.com",
+                            "last_loggedin": null
+                        },
+                        "password": {
+                            "userid": 25,
+                            "password": "$2b$10$K.TsRlUHcs9nFmxYo/txkeQWpr.UMWUxM4CeqbvRz4gfkyEufbuFe"
+                        },
+                        "pinfo": {
+                            "userid": 25,
+                            "first_name": "Jhon",
+                            "last_name": "Doe",
+                            "date_of_birth": "1989-30-05",
+                            "phone_number": "12345678900"
+                        },
+                        "cart": {
+                            "userid": 25,
+                            "total_cart_price": "0"
+                        }
+                    }
+        '422':
+          description: >-
+            Unprocessable Entity, meaning one or more field failed  validation
+            process.
+          content:
+            application/json:
+              examples:
+                Error Response:
+                  value: |-
+                    {
+                        "Errors": {
+                            "username": {
+                                "msg": "Invalid value",
+                                "param": "username",
+                                "location": "body"
+                            },
+                            "email": {
+                                "value": "jdoe@gmail",
+                                "msg": "Invalid value",
+                                "param": "email",
+                                "location": "body"
+                            }
+                        }
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - Auth
+  /auth/login:
+    summary: Logs in a user
+    description: Logs in a user intended to apply to post operation
+    post:
+      summary: 'Logs user in '
+      description: >-
+        Using a usermail and password checks the password inserted agains the
+        encrypted password for the user.
+      operationId: login-user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                lpassword:
+                  type: string
+                  format: password
+                  example: password1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                User data:
+                  value: |-
+                    {
+                        "id": 25,
+                        "username": "Jdoe1989",
+                        "email": "jdoe@gmail.com"
+                    }
+        '422':
+          description: >-
+            Unprocessable Entity, meaning one or more field failed  validation
+            process.
+          content:
+            application/json:
+              examples:
+                Error Response:
+                  value: |-
+                    {
+                        "Errors": {
+                             "email": {
+                                "value": "jdoe@gmail",
+                                "msg": "Invalid value",
+                                "param": "email",
+                                "location": "body"
+                            }
+                        }
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - Auth
+  /auth/logout:
+    summary: Logout user
+    description: 'Logs out user and clears session '
+    get:
+      summary: Logs out user
+      description: 'Logs the user out of the session '
+      operationId: logout-user
+      responses:
+        '200':
+          description: Success
+          content:
+            aplication/json:
+              examples:
+                OK:
+                  value: |-
+                    {
+                      "Message": "OK"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - Auth
+  /categories:
+    summary: Categories and Products
+    description: Get Operations to retriece Categories and Products
+    get:
+      summary: Get Categories
+      description: Retrieve Store Categories
+      operationId: get-categories
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Categories:
+                  value: |-
+                    [
+                        {
+                            "id": 1,
+                            "category_name": "Household"
+                        },
+                        {
+                            "id": 2,
+                            "category_name": "Pets"
+                        },
+                        {
+                            "id": 3,
+                            "category_name": "Kitchenware"
+                        },
+                        {
+                            "id": 4,
+                            "category_name": "Entertaiment"
+                        },
+                        {
+                            "id": 5,
+                            "category_name": "News and Tobacco"
+                        },
+                        {
+                            "id": 6,
+                            "category_name": "Cereal"
+                        },
+                        {
+                            "id": 7,
+                            "category_name": "Bakery"
+                        },
+                        {
+                            "id": 8,
+                            "category_name": "Alcohol"
+                        },
+                        {
+                            "id": 9,
+                            "category_name": "Frozen"
+                        },
+                        {
+                            "id": 10,
+                            "category_name": "Drinks"
+                        },
+                        {
+                            "id": 11,
+                            "category_name": "Health & Wellness"
+                        }
+                    ]
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - Categories/Products
+  /categories/search:
+    summary: Search products
+    description: Uses get request to search products based on query
+    get:
+      summary: search query
+      description: Search based on query search
+      operationId: category-search
+      parameters:
+        - in: query
+          name: query
+          required: true
+          schema:
+            type: string
+          description: Search query
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Search Response:
+                  value: |-
+                    [
+                        {
+                            "id": 24,
+                            "name": "Naturo Dog Food Variety 6X400g",
+                            "description": null,
+                            "image": null,
+                            "price": "7.50",
+                            "instore": 9,
+                            "categoryid": 2
+                        },
+                        {
+                            "id": 25,
+                            "name": "Butchers Recipe In Gravy Dog Food Tin 12X400g",
+                            "description": null,
+                            "image": null,
+                            "price": "9.50",
+                            "instore": 4,
+                            "categoryid": 2
+                        }
+                    ]
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - Categories/Products
+  /categories/{categoryid}:
+    summary: single category selection
+    description: Select the products in a category
+    get:
+      summary: GET category products
+      description: >-
+        Given a valid category id as parameter returns in response all products
+        related with that category
+      operationId: GET-category's-products
+      parameters:
+        - in: path
+          name: categoryid
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Products of Category 1:
+                  value: |-
+                    [
+                        {
+                            "id": 1,
+                            "name": "Ecover Softener Apple Blossom & Almond 50W 1.5L",
+                            "description": null,
+                            "image": null,
+                            "price": "5.00",
+                            "instore": 10,
+                            "categoryid": 1
+                        },
+                        {
+                            "id": 2,
+                            "name": "Lenor Unstoppables In-Wash Scent Booster Fresh 320G",
+                            "description": null,
+                            "image": null,
+                            "price": "6.75",
+                            "instore": 10,
+                            "categoryid": 1
+                        }
+                    ]
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - Categories/Products
+  /categories/products/{productid}:
+    summary: Select Product
+    description: Path dedicated to GET of single product information
+    get:
+      summary: GET product
+      description: GET information of a individual product
+      operationId: get-product
+      parameters:
+        - in: path
+          name: productid
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                GET product with id 1:
+                  value: |-
+                    {
+                        "id": 1,
+                        "name": "Ecover Softener Apple Blossom & Almond 50W 1.5L",
+                        "description": null,
+                        "image": null,
+                        "price": "5.00",
+                        "instore": 10,
+                        "categoryid": 1
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - Categories/Products
+  /users/{userid}:
+    summary: 'Related with username and email '
+    description: GET and PUT operations
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+    get:
+      summary: get user
+      description: Retrieves username and email from authenticated user
+      operationId: get-user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                user retrieval:
+                  value: |-
+                    {
+                        "id": 25,
+                        "username": "Jdoe1989",
+                        "email": "jdoe@gmail.com"
+                    }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - Users
+    put:
+      summary: Update username and/or email
+      description: PUT operation on username and/or email
+      operationId: update-user
+      requestBody:
+        required: true
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  minLength: 4
+                  maxLength: 40
+                  description: Must contain alphanumeric values
+                  example: Jdoe1989
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                updated username and/or password:
+                  value: |-
+                    {
+                        "username": "updatedusername",
+                        "email": "updatedpassword"
+                    }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Error Response:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Error response:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '409':
+          description: Conflict, can also happend if user is already in  Use
+          content:
+            application/json:
+              examples:
+                Error Response:
+                  value: |-
+                    {
+                        "message": "Email already in Use"
+                    }
+        '422':
+          description: >-
+            Unprocessable Entity, meaning one or more field failed  validation
+            process.
+          content:
+            application/json:
+              examples:
+                Error Response:
+                  value: |-
+                    {
+                        "Errors": {
+                             "email": {
+                                "value": "jdoe@gmail",
+                                "msg": "Invalid value",
+                                "param": "email",
+                                "location": "body"
+                            }
+                        }
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - Users
+  /users/{userid}/pinfo:
+    summary: Personal Info Path
+    description: Get Put operations for user personal information
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+    get:
+      summary: GET pinfo
+      description: Retrieves User Personal Information
+      operationId: GET-pinfo
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value: |-
+                    {
+                        "id": 25,
+                        "username": "Jdoe1989",
+                        "email": "jdoe@gmail.com"
+                    }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Personal Info
+    put:
+      summary: Updates personal info
+      description: PUT on personal information fo user
+      operationId: PUT-pinfo
+      requestBody:
+        required: true
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  minLength: 2
+                  maxLength: 25
+                  description: Must contain only Alphabet values and spaces
+                  example: Jhon
+                last_name:
+                  type: string
+                  minLength: 2
+                  maxLength: 50
+                  description: Must contain only Alphabet values and spaces
+                  example: Doe
+                date_of_birth:
+                  type: string
+                  format: date
+                  example: '1989-30-05'
+                phone_number:
+                  type: string
+                  description: Must contain valid Phone Number
+                  example: '12345678900'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Sucess:
+                  value: |-
+                    {
+                      "first_name": "Jhon",
+                      "last_name": "Doe",
+                      "date_of_birth": "1989-30-05",
+                      "phone_number": "12345678900"
+                    }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '422':
+          description: >-
+            Unprocessable Entity, meaning one or more field failed  validation
+            process.
+          content:
+            application/json:
+              examples:
+                Error Response:
+                  value: |-
+                    {
+                        "Errors": {
+                             "email": {
+                                "value": "jdoe@gmail",
+                                "msg": "Invalid value",
+                                "param": "email",
+                                "location": "body"
+                            }
+                        }
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Personal Info
+  /users/{userid}/password:
+    summary: password path
+    description: Use to update password
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+    put:
+      summary: Update Password
+      description: ''
+      operationId: PUT-password
+      requestBody:
+        required: true
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                oldpassword:
+                  type: string
+                  format: password
+                  minLength: 6
+                  maxLength: 30
+                  description: MUST match actual password
+                newpassword:
+                  type: string
+                  format: password
+                  minLength: 6
+                  maxLength: 30
+                  description: Must contain mix of Alphanumeric values
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value: |-
+                    {
+                     "userid": "25"
+                    }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '422':
+          description: >-
+            Unprocessable Entity, meaning one or more field failed  validation
+            process.
+          content:
+            application/json:
+              examples:
+                Error Response:
+                  value: |-
+                    {
+                        "Errors": {
+                             "newpassword": {
+                                "value": "passwo",
+                                "msg": "Invalid value",
+                                "param": "newpassword",
+                                "location": "body"
+                            }
+                        }
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Password
+  /users/{userid}/addresses:
+    summary: Users Addresses
+    description: Operation related to POST and DELETE of addresses
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+    get:
+      summary: get addresses
+      description: GET all user addresses
+      operationId: GET-addresses
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Respponse:
+                  value: |-
+                    [
+                        {
+                            "id": 12,
+                            "postcode": "poscode",
+                            "street": "street",
+                            "city": "city",
+                            "county": "county"
+                        },
+                        {
+                            "id": 13,
+                            "postcode": "poscode",
+                            "street": "street",
+                            "city": "city",
+                            "county": "county"
+                        }
+                    ]
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Address
+    post:
+      summary: creates new address
+      description: POST operation for address
+      operationId: POST-address
+      requestBody:
+        required: true
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                postcode:
+                  type: string
+                  format: Postal Code
+                  maxLength: 15
+                  example: AA11 1AA
+                street:
+                  type: string
+                  minLength: 5
+                  maxLength: 150
+                  example: 1 Street Lane
+                city:
+                  type: string
+                  minLength: 3
+                  maxLength: 40
+                  example: MidCity
+                county:
+                  type: string
+                  minLength: 3
+                  maxLength: 40
+                  example: Countylane
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value:
+                    id: 12
+                    postcode: AA11 1AA
+                    street: 1 Street Lane
+                    city: MidCity
+                    county: Countylane
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '422':
+          description: >-
+            Unprocessable Entity, meaning one or more field failed  validation
+            process.
+          content:
+            application/json:
+              examples:
+                Error Response:
+                  value: |-
+                    {
+                        "Errors": {
+                             "street": {
+                                "value": "12{Street Lane",
+                                "msg": "Invalid value",
+                                "param": "street",
+                                "location": "body"
+                            }
+                        }
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Address
+  /users/{userid}/addresses/{addressid}:
+    summary: Select address
+    description: Retrieve all information of 1 address
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: addressid
+        schema:
+          type: integer
+        required: true
+    get:
+      summary: Retrieve user address
+      description: GET a user address
+      operationId: GET-Address
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value:
+                    id: 12
+                    postcode: poscode
+                    street: street
+                    city: city
+                    county: county
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '404':
+          description: Content not Found
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Content not Found"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Address
+    delete:
+      summary: Deletion of address
+      description: Deletes selected address
+      operationId: DELETE-address
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value:
+                    id: 12
+                    postcode: AA11 1AA
+                    street: 1 Street Lane
+                    city: MidCity
+                    county: Countylane
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Address
+  /users/{userid}/cart:
+    summary: User Cart
+    description: Operations related to cart and cart items
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+    get:
+      summary: Get cart info
+      description: Get basic cart related info such as cart id and cart overall price
+      operationId: GET-cart
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value:
+                    cart_userid:"25": null
+                    total_cart_price:"0": null
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Cart
+  /users/{userid}/cart/products:
+    summary: Cart products operations
+    description: >-
+      POST operation to add, or if exists update, product and DELETE operation
+      on products to remove from cart
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+    post:
+      summary: POST operation
+      description: >-
+        Add a product to cart and calculate the total cart price based on number
+        of items added
+      operationId: POST-cartProduct
+      requestBody:
+        required: true
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                productid:
+                  type: integer
+                  example: 3
+                qty:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                  example: 1
+                total_pp:
+                  type: number
+                  format: float
+                  minimum: 0.01
+                  maximum: 9999.99
+                  example: 3.5
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value: |-
+                    {
+                      "userid": 1,
+                      "total_cart_price": "13.5"
+                    }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Cart
+    get:
+      summary: GET cart operation
+      description: Retrieves with GET products added to user cart
+      operationId: GET-cartProducts
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value: |-
+                    [
+                        {
+                            "productid": 3,
+                            "name": "Fairy Fresh In-Wash Scent Booster 320G",
+                            "qty": 2,
+                            "total_pp": "13.5"
+                        }
+                    ]
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Cart
+    delete:
+      summary: DELETE operation
+      description: Deletes all products from cart and set total_cart_prices to 0
+      operationId: DELETE-allProducts
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value: |-
+                    {
+                        "userid": 24,
+                        "total_cart_price": "0"
+                    }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - User's Cart
+  /users/{userid}/cart/products/{productid}:
+    summary: Product Path
+    description: Used on the removal of a product from cart
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: productid
+        schema:
+          type: integer
+        required: true
+    delete:
+      summary: Delete Cart Product
+      description: Removes a product from cart
+      operationId: DELETE-cartProduct
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value: |-
+                    {
+                        "userid": 24,
+                        "total_cart_price": "0"
+                    }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Cart
+  /users/{userid}/cart/checkout:
+    summary: Chekout Path
+    description: Path required to checkout a user
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+    post:
+      summary: Checkout Cart
+      description: >-
+        POST a new order, moves cart items onto order and deletes items from
+        cart reseting cart's total sum
+      operationId: POST-cartCheckout
+      requestBody:
+        required: true
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                total_price:
+                  type: number
+                  format: float
+                  example: 40.5
+                del_postcode:
+                  type: string
+                  maxLength: 15
+                  example: AA11 1AA
+                del_street:
+                  type: string
+                  minLength: 5
+                  maxLength: 150
+                  example: 11 Street Lane
+                del_city:
+                  type: string
+                  minLength: 3
+                  maxLength: 40
+                  example: Mid City
+                del_county:
+                  type: string
+                  minLength: 3
+                  maxLength: 40
+                  example: County
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value: |-
+                    {
+                        "order": {
+                            "id": 14,
+                            "userid": 24,
+                            "order_date": "2023-04-08T21:32:10.762Z",
+                            "total_price": "19",
+                            "status": "PENDING",
+                            "modified": "2023-04-08T21:32:10.764Z",
+                            "del_postcode": "GU11 4BD",
+                            "del_street": "12 Alexander House, 12 Fraser Road",
+                            "del_city": "Aldershot",
+                            "del_county": "Hampshire"
+                        },
+                        "items": [
+                            {
+                                "orderid": 14,
+                                "productid": 3,
+                                "product_name": "Fairy Fresh In-Wash Scent Booster 320G",
+                                "qty": 2,
+                                "total_pp": "13.5"
+                            },
+                            {
+                                "orderid": 14,
+                                "productid": 1,
+                                "product_name": "Ecover Softener Apple Blossom & Almond 50W 1.5L",
+                                "qty": 1,
+                                "total_pp": "5.5"
+                            }
+                        ]
+                    }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '422':
+          description: >-
+            Unprocessable Entity, meaning one or more field failed  validation
+            process.
+          content:
+            application/json:
+              examples:
+                Error Response:
+                  value: |-
+                    {
+                        "Errors": {
+                             "county": {
+                                "value": "coun%ty",
+                                "msg": "Invalid value",
+                                "param": "county",
+                                "location": "body"
+                            }
+                        }
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Cart
+  /users/{userid}/orders:
+    summary: Orders path
+    description: used to get orders posted related with client user
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+    get:
+      summary: GET operation
+      description: GET all orders from user without items related to orders
+      operationId: GET-userOrders
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value: |2-
+                     {
+                            "id": 11,
+                            "userid": 24,
+                            "order_date": "2023-04-07T09:06:20.748Z",
+                            "total_price": "41",
+                            "status": "PROCESSED",
+                            "modified": "2023-04-07T09:08:14.369Z",
+                            "del_postcode": "GU11 4BD",
+                            "del_street": "12 Alexander House, 12 Fraser Road",
+                            "del_city": "Aldershait",
+                            "del_county": "Hampshire"
+                        }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Orders
+  /users/{userid}/orders/{orderid}:
+    summary: Orders path
+    description: Used to retrieve order or update the order's status
+    parameters:
+      - in: path
+        name: userid
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: orderid
+        schema:
+          type: integer
+        required: true
+    get:
+      summary: GET operation
+      description: Retrieves order information and items related to order
+      operationId: GET-order
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              examples:
+                Success Response:
+                  value: |-
+                    {
+                        "order": {
+                            "id": 11,
+                            "userid": 24,
+                            "order_date": "2023-04-07T09:06:20.748Z",
+                            "total_price": "41",
+                            "status": "PROCESSED",
+                            "modified": "2023-04-07T09:08:14.369Z",
+                            "del_postcode": "GU11 4BD",
+                            "del_street": "12 Alexander House, 12 Fraser Road",
+                            "del_city": "Aldershait",
+                            "del_county": "Hampshire"
+                        },
+                        "products": [
+                            {
+                                "orderid": 11,
+                                "productid": 1,
+                                "product_name": "Ecover Softener Apple Blossom & Almond 50W 1.5L",
+                                "qty": 2,
+                                "total_pp": "10.5"
+                            },
+                            {
+                                "orderid": 11,
+                                "productid": 3,
+                                "product_name": "Fairy Fresh In-Wash Scent Booster 320G",
+                                "qty": 2,
+                                "total_pp": "13.5"
+                            }
+                        ]
+                    }
+        '401':
+          description: Unauthorized Access
+          content:
+            application/json:
+              examples:
+                Unauthenticated:
+                  value: |-
+                    {
+                        "message": "User Not Logged In"
+                    }
+        '403':
+          description: Forbidden Access
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  value: |-
+                    {
+                        "message": "Unauthorized Access"
+                    }
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Server Error:
+                  value: |-
+                    {
+                      "Message": "Error Message"
+                    }
+      tags:
+        - User's Orders
