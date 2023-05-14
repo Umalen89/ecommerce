@@ -107,7 +107,7 @@ router.post('/cart/checkout', validateCheckout, async (req, res, next) => {
 
         if ( id != userid){ throw createError(403, 'Unauthorized Access') }
 
-        results = await CartServiceInstance.checkout({cart_userid: userid, ...data})
+        const results = await CartServiceInstance.checkout({cart_userid: userid, ...data})
 
         res.status(200).send(results);
     }catch(err){

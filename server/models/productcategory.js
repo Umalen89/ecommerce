@@ -56,4 +56,18 @@ module.exports = class ProductCategoryModel {
             throw new Error(error);
         }
     }
+
+    async getAll(){
+        try{
+            const results = await pool.query('SELECT * FROM products ORDER BY name');
+            
+            if (!results.rows || results.rows.length < 1){
+                return results.rows;
+            }
+
+            return results.rows;
+        }catch(error){
+            throw new Error(error);
+        }
+    }
 }

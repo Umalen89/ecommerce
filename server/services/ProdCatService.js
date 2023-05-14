@@ -49,4 +49,16 @@ module.exports = class ProductCategoryService {
             throw createError(500, err)
         }
     }
+
+    async getAll(){
+        try{
+            const results = await ProductCategoryInstance.getAll();
+
+            if (!results) { throw createError(404, 'Content Not Found')}
+
+            return results;
+        }catch(err){
+            throw createError(500, err)
+        }
+    }
 }

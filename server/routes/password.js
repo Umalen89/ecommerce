@@ -17,7 +17,7 @@ const { validatePasswords } = require('../utils/validators');
         
         if( id != userid){ throw createError(403, 'Unauthorized Access') }
 
-        response = await PasswordServiceInstance.update({userid, ...data})
+        const response = await PasswordServiceInstance.update({userid, ...data})
 
         res.status(200).send(response);
     }catch(err){

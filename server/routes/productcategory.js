@@ -6,7 +6,7 @@ const ProdCatServiceInstance = new ProductCategoryService();
 
 module.exports = (app) => {
 
-    app.use('/categories', router);
+    app.use('/api/categories', router);
 
     router.get('/', async (req,res, next) => {
         try{
@@ -31,6 +31,17 @@ module.exports = (app) => {
         }
     })
 
+    
+    router.get('/products', async (req, res, next) => {
+        try{
+            const results = await ProdCatServiceInstance.getAll();
+
+            res.status(200).send(results);
+        }catch(err){
+            next(err);
+        }
+    })
+
     router.get('/:categoryid', async (req, res, next) => {
         try{
             const { categoryid } = req.params;
@@ -42,6 +53,7 @@ module.exports = (app) => {
             next(err);
         }
     })
+
 
     router.get('/products/:productid', async (req, res, next) => {
         try{

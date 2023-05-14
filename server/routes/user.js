@@ -13,7 +13,7 @@ const ordersRouter = require('./order');
 
 module.exports = (app) => {
 
-  app.use('/users', router);
+  app.use('/api/users', router);
 
 
   router.get('/:userid', async (req, res, next) => {
